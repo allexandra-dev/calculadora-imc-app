@@ -1,34 +1,38 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
-import { Medicao } from '../types/medicao';
+import { useMedicoes } from '../context/MedicoesContext';
+import { classificarIMC } from '../utils/imc';
 import MedicaoCard from '../components/MedicaoCard';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
-// Etapa 2: dados de exemplo (na Etapa 3 viram dados reais)
-const medicoesExemplo: Medicao[] = [
-  { id: '1', data: '2026-10-31T10:00:00', peso: 75.5, altura: 1.75, imc: 24.7 },
-  { id: '2', data: '2026-10-24T10:00:00', peso: 77, altura: 1.75, imc: 25.1 },
-  { id: '3', data: '2026-10-17T10:00:00', peso: 78.2, altura: 1.75, imc: 25.5 },
-];
-
 export default function Dashboard({ navigation }: Props) {
-  const ultima = medicoesExemplo[0];
+  const { medicoes } = useMedicoes();
+  const ultima = medicoes[0];
 
   return (
     <View style={styles.container}>
       <View style={styles.resumo}>
         <Text style={styles.resumoLabel}>Último IMC</Text>
-        <Text style={styles.resumoValor}>{ultima.imc.toFixed(1)}</Text>
-        <Text style={styles.resumoClasse}>Normal</Text>
+        {ultima ? (
+          <>
+            <Text style={styles.resumoValor}>{ultima.imc.toFixed(1)}</Text>
+            <Text style={styles.resumoClasse}>{classificarIMC(ultima.imc)}</Text>
+          </>
+        ) : (
+          <Text style={styles.resumoClasse}>Nenhuma medição ainda</Text>
+        )}
       </View>
 
       <Text style={styles.titulo}>Histórico</Text>
       <FlatList
-        data={medicoesExemplo}
+        data={medicoes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <MedicaoCard medicao={item} />}
+        ListEmptyComponent={
+          <Text style={styles.vazio}>Toque em "Nova medição" para começar.</Text>
+        }
       />
 
       <TouchableOpacity
@@ -54,6 +58,7 @@ const styles = StyleSheet.create({
   resumoValor: { color: '#fff', fontSize: 40, fontWeight: 'bold' },
   resumoClasse: { color: '#fff', fontSize: 16 },
   titulo: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+  vazio: { textAlign: 'center', color: '#6b7280', marginTop: 24 },
   botao: {
     backgroundColor: '#2E5E4E',
     padding: 16,
