@@ -6,6 +6,7 @@ import { carregarMedicoes, salvarMedicoes } from '../storage/medicoesStorage';
 type MedicoesContextType = {
   medicoes: Medicao[];
   adicionarMedicao: (medicao: Medicao) => void;
+  limparHistorico: () => void;
 };
 
 const MedicoesContext = createContext<MedicoesContextType | null>(null);
@@ -34,8 +35,13 @@ export function MedicoesProvider({ children }: { children: ReactNode }) {
     setMedicoes((listaAtual) => [medicao, ...listaAtual]);
   }
 
+    // Extra: apaga todas as medições
+  function limparHistorico() {
+    setMedicoes([]);
+  }
+
   return (
-    <MedicoesContext.Provider value={{ medicoes, adicionarMedicao }}>
+    <MedicoesContext.Provider value={{ medicoes, adicionarMedicao, limparHistorico }}>
       {children}
     </MedicoesContext.Provider>
   );
