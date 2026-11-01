@@ -17,3 +17,14 @@ export function classificarIMC(imc: number): string {
 export function converterNumero(texto: string): number {
   return parseFloat(texto.replace(',', '.'));
 }
+
+// Uma cor para cada faixa de IMC
+export function corIMC(imc: number): string {
+  if (imc < 18.5) return '#2563eb'; // azul
+  if (imc < 25) return '#16a34a';   // verde
+  if (imc < 30) return '#b45309';   // amarelo escuro
+  if (imc < 35) return '#ea580c';   // laranja
+  if (imc < 40) return '#dc2626';   // vermelho
+  return '#991b1b';                 // vermelho escuro
+}
+

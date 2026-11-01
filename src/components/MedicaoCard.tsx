@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Medicao } from '../types/medicao';
-import { classificarIMC } from '../utils/imc';
+import { classificarIMC, corIMC } from '../utils/imc';
 
 type Props = {
   medicao: Medicao;
@@ -8,9 +8,10 @@ type Props = {
 
 export default function MedicaoCard({ medicao }: Props) {
   const data = new Date(medicao.data).toLocaleDateString('pt-BR');
+  const cor = corIMC(medicao.imc);
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { borderLeftColor: cor }]}>
       <View>
         <Text style={styles.data}>{data}</Text>
         <Text style={styles.detalhe}>
@@ -18,8 +19,8 @@ export default function MedicaoCard({ medicao }: Props) {
         </Text>
       </View>
       <View style={styles.direita}>
-        <Text style={styles.imc}>{medicao.imc.toFixed(1)}</Text>
-        <Text style={styles.classe}>{classificarIMC(medicao.imc)}</Text>
+        <Text style={[styles.imc, { color: cor }]}>{medicao.imc.toFixed(1)}</Text>
+        <Text style={[styles.classe, { color: cor }]}>{classificarIMC(medicao.imc)}</Text>
       </View>
     </View>
   );
@@ -36,10 +37,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     borderColor: '#e5e7eb',
+    borderLeftWidth: 6,
   },
   data: { fontSize: 15, fontWeight: 'bold' },
   detalhe: { fontSize: 13, color: '#6b7280' },
   direita: { alignItems: 'flex-end' },
-  imc: { fontSize: 20, fontWeight: 'bold', color: '#2E5E4E' },
-  classe: { fontSize: 12, color: '#6b7280' },
+  imc: { fontSize: 20, fontWeight: 'bold' },
+  classe: { fontSize: 12, fontWeight: 'bold' },
 });

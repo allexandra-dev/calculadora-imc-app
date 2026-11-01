@@ -1,8 +1,9 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { useMedicoes } from '../context/MedicoesContext';
-import { classificarIMC } from '../utils/imc';
+import { classificarIMC, corIMC } from '../utils/imc';
 import MedicaoCard from '../components/MedicaoCard';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
@@ -10,10 +11,11 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 export default function Dashboard({ navigation }: Props) {
   const { medicoes } = useMedicoes();
   const ultima = medicoes[0];
+  const corResumo = ultima ? corIMC(ultima.imc) : '#2E5E4E';
 
   return (
-    <View style={styles.container}>
-      <View style={styles.resumo}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <View style={[styles.resumo, { backgroundColor: corResumo }]}>
         <Text style={styles.resumoLabel}>Último IMC</Text>
         {ultima ? (
           <>
@@ -41,22 +43,21 @@ export default function Dashboard({ navigation }: Props) {
       >
         <Text style={styles.botaoTexto}>+ Nova medição</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f3f4f6' },
   resumo: {
-    backgroundColor: '#2E5E4E',
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
     marginBottom: 16,
   },
-  resumoLabel: { color: '#d1fae5', fontSize: 14 },
+  resumoLabel: { color: '#fff', fontSize: 14, opacity: 0.85 },
   resumoValor: { color: '#fff', fontSize: 40, fontWeight: 'bold' },
-  resumoClasse: { color: '#fff', fontSize: 16 },
+  resumoClasse: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   titulo: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
   vazio: { textAlign: 'center', color: '#6b7280', marginTop: 24 },
   botao: {
