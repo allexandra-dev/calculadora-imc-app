@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { useMedicoes } from '../context/MedicoesContext';
@@ -13,8 +13,26 @@ export default function NovoCalculo({ navigation }: Props) {
   const { adicionarMedicao } = useMedicoes();
 
   function salvar() {
+    // 1. Não deixa calcular com campo vazio
+    if (peso.trim() === '' || altura.trim() === '') {
+      Alert.alert('Atenção', 'Preencha o peso e a altura.');
+      return;
+    }
+
     const pesoNum = converterNumero(peso);
     const alturaNum = converterNumero(altura);
+
+    // 2. Não aceita letras, zero ou números negativos
+    if (isNaN(pesoNum) || isNaN(alturaNum) || pesoNum <= 0 || alturaNum <= 0) {
+      Alert.alert('Atenção', 'Digite apenas números maiores que zero.');
+      return;
+    }
+
+    // 3. Avisa se a altura parece estar em centímetros
+    if (alturaNum > 3) {
+      Alert.alert('Atenção', 'A altura deve estar em metros. Exemplo: 1.75');
+      return;
+    }
 
     adicionarMedicao({
       id: Date.now().toString(),
