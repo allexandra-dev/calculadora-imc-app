@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Medicao } from '../types/medicao';
+import { classificarIMC } from '../utils/imc';
 
 type Props = {
   medicao: Medicao;
@@ -16,7 +17,10 @@ export default function MedicaoCard({ medicao }: Props) {
           {medicao.peso} kg · {medicao.altura} m
         </Text>
       </View>
-      <Text style={styles.imc}>{medicao.imc.toFixed(1)}</Text>
+      <View style={styles.direita}>
+        <Text style={styles.imc}>{medicao.imc.toFixed(1)}</Text>
+        <Text style={styles.classe}>{classificarIMC(medicao.imc)}</Text>
+      </View>
     </View>
   );
 }
@@ -35,5 +39,7 @@ const styles = StyleSheet.create({
   },
   data: { fontSize: 15, fontWeight: 'bold' },
   detalhe: { fontSize: 13, color: '#6b7280' },
+  direita: { alignItems: 'flex-end' },
   imc: { fontSize: 20, fontWeight: 'bold', color: '#2E5E4E' },
+  classe: { fontSize: 12, color: '#6b7280' },
 });
